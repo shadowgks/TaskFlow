@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record userSignIn(
+public record UserLoginDto(
         @NotNull(message = "The username of role cannot be null")
         @NotBlank(message = "The username of role cannot be blank")
         String username,

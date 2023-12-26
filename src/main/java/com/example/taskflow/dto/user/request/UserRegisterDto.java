@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 @Builder
-public record userSignUp(
+public record UserRegisterDto(
         @NotNull(message = "The first name cannot be null")
         @NotBlank(message = "The first name cannot be blank")
         @Column(nullable = false)

@@ -2,10 +2,7 @@ package com.example.taskflow.domain.entities;
 
 import com.example.taskflow.domain.enums.StatusTask;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,17 +13,19 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Task {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private StatusTask statusTask;
     private Boolean completed;
+    private Boolean changed;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
     @ElementCollection
     private List<String> tags;
 
