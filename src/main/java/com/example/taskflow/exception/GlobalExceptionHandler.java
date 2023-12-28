@@ -25,9 +25,7 @@ public class GlobalExceptionHandler {
         Response<Map<String, String>> response = new Response<>();
         Map<String, String> setFieldsValidation = new HashMap<>();
         ev.getBindingResult().getFieldErrors().forEach(
-                e -> {
-                    setFieldsValidation.put(e.getField(), e.getDefaultMessage());
-                }
+                e -> setFieldsValidation.put(e.getField(), e.getDefaultMessage())
         );
         response.setErrorValidation(setFieldsValidation);
         return ResponseEntity.badRequest().body(response);

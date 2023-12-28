@@ -1,6 +1,7 @@
 package com.example.taskflow.domain.entities;
 
 import com.example.taskflow.domain.enums.StatusTask;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,6 +22,7 @@ public class Task {
     private String description;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    @Enumerated(EnumType.STRING)
     private StatusTask statusTask;
     private Boolean completed;
     private Boolean changed;
@@ -33,6 +35,17 @@ public class Task {
     @JoinColumn(name = "assigned_to_id")
     private User assignedTo;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
+
+    @PrePersist
+    public void setDefaultValue(){
+        if(changed == null){
+            changed = false;
+        }
+        if(completed == null){
+            completed = false;
+        }
+    }
 }

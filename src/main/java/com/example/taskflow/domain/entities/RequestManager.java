@@ -3,6 +3,7 @@ package com.example.taskflow.domain.entities;
 
 import com.example.taskflow.domain.enums.TokenStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 public class RequestManager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

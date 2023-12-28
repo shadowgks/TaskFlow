@@ -2,6 +2,7 @@ package com.example.taskflow.mapper;
 
 
 import com.example.taskflow.domain.entities.Task;
+import com.example.taskflow.dto.task.request.TaskRequestDto;
 import com.example.taskflow.dto.task.response.TaskResponseDto;
 
 public class TaskMapper {
@@ -21,19 +22,17 @@ public class TaskMapper {
                 .build();
     }
 
-    public static Task mapToEntity(TaskResponseDto taskResponseDto){
+    public static Task mapToEntity(TaskRequestDto taskRequestDto){
         return Task.builder()
-                .name(taskResponseDto.name())
-                .statusTask(taskResponseDto.statusTask())
-                .endDate(taskResponseDto.endDate())
-                .assignedTo(taskResponseDto.assignedTo())
-                .tags(taskResponseDto.tags())
-                .changed(taskResponseDto.changed())
-                .description(taskResponseDto.description())
-                .completed(taskResponseDto.completed())
-                .createdAt(taskResponseDto.createdAt())
-                .startDate(taskResponseDto.startDate())
-                .user(taskResponseDto.user())
+                .name(taskRequestDto.name())
+                .statusTask(taskRequestDto.statusTask())
+                .endDate(taskRequestDto.endDate())
+                .user(taskRequestDto.user())
+                .assignedTo(taskRequestDto.assignedToUser())
+                .tags(taskRequestDto.tags())
+                .description(taskRequestDto.description())
+                .createdAt(taskRequestDto.createdAt())
+                .startDate(taskRequestDto.startDate())
                 .build();
     }
 }

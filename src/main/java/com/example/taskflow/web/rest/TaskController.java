@@ -1,12 +1,14 @@
 package com.example.taskflow.web.rest;
 
 import com.example.taskflow.domain.entities.Task;
+import com.example.taskflow.dto.task.request.TaskRequestDto;
 import com.example.taskflow.dto.task.response.TaskResponseDto;
 import com.example.taskflow.mapper.TaskMapper;
 import com.example.taskflow.services.TaskService;
 import com.example.taskflow.utils.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +32,11 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Response<TaskResponseDto>> addTask(@Valid @RequestBody T){
-
+    public ResponseEntity<Response<TaskResponseDto>> createTask(@Valid @RequestBody TaskRequestDto taskRequestDto){
+        Response<TaskResponseDto> response = new Response<>();
+        Task task = taskService.create(TaskMapper.mapToEntity(taskRequestDto));
+        response.setResult(TaskMapper.mapToDto(task));
+        response.setMessage("Created Task Successfully");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

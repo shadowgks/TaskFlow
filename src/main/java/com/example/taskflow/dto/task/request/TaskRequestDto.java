@@ -1,5 +1,6 @@
 package com.example.taskflow.dto.task.request;
 
+import com.example.taskflow.domain.entities.User;
 import com.example.taskflow.domain.enums.StatusTask;
 import jakarta.validation.constraints.*;
 
@@ -17,16 +18,11 @@ public record TaskRequestDto(
         LocalDateTime endDate,
         @NotNull(message = "You must be selected status task")
         StatusTask statusTask,
-        @NotNull(message = "Completed status cannot be null")
-        Boolean completed,
-        @NotNull(message = "Changed status cannot be null")
-        Boolean changed,
         @NotEmpty(message = "Tags list cannot be empty")
         List<String> tags,
-        @NotNull(message = "AssignedToId cannot be null")
-        Long assignedToId,
-        @NotNull(message = "UserId cannot be null")
-        Long userId,
+        @NotNull(message = "user cannot be null")
+        User user,
+        User assignedToUser,
         LocalDateTime createdAt
 ) {
 }
