@@ -3,15 +3,15 @@ package com.example.taskflow.domain.entities;
 
 import com.example.taskflow.domain.enums.TokenStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class RequestManager {
     @Id
@@ -19,6 +19,7 @@ public class RequestManager {
     private Long id;
     private Integer numberChoice;
     private LocalDateTime dateChoice;
+    @Enumerated(EnumType.STRING)
     private TokenStatus tokenStatus;
     @ManyToOne
     @JoinColumn(name = "user_id")
