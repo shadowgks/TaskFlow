@@ -24,6 +24,7 @@ public class TaskMapper {
 
     public static Task mapToEntity(TaskRequestDto taskRequestDto){
         return Task.builder()
+                .id(taskRequestDto.id())
                 .name(taskRequestDto.name())
                 .statusTask(taskRequestDto.statusTask())
                 .endDate(taskRequestDto.endDate())

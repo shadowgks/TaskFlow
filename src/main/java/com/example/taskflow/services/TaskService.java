@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface TaskService {
-    Task create(Task task);
-    Task update(Task task);
-    void delete(Task task);
     List<Task> getTasks();
-    Task rejectedTask(String userAssignment, String manager, Long taskId);
+    List<Task> getTasksByUsername(String username);
+    Task create(Task task);
+    Task update(String username, Task task);
+    void delete(Task task);
+    Task rejectedTask(Long taskIdP, String userAssignmentP, String managerP);
+    void deletedTask(Long taskIdP, String userAssignmentP, String managerP);
+    Task assignmentToUser(Long taskIdP, String userAssignmentP, String managerP);
 }

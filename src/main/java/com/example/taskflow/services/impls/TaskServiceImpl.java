@@ -1,10 +1,13 @@
 package com.example.taskflow.services.impls;
 
+import com.example.taskflow.domain.entities.RequestManager;
 import com.example.taskflow.domain.entities.Task;
 import com.example.taskflow.domain.entities.User;
 import com.example.taskflow.domain.enums.Role;
+import com.example.taskflow.repositories.RequestManagerRepository;
 import com.example.taskflow.repositories.TaskRepository;
 import com.example.taskflow.repositories.UserRepository;
+import com.example.taskflow.services.RequestManagerService;
 import com.example.taskflow.services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +20,23 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final RequestManagerServiceImpl requestManagerServiceImpl;
 
     @Override
     public List<Task> getTasks() {
         List<Task> taskList = taskRepository.findAll();
         if(taskList.isEmpty()){
             throw new IllegalArgumentException("Not found any tasks!");
+        }
+        return taskList;
+    }
+
+    public List<Task> getTasksByUsername(String username){
+        User user = checkUserIfExist(username,
+                "This is user not exist!");
+        List<Task> taskList = taskRepository.findAllByUser(user);
+        if(taskList.isEmpty()){
+            throw new IllegalArgumentException("Not found any tasks! "+ username);
         }
         return taskList;
     }
@@ -43,8 +57,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task update(Task task) {
-        return null;
+    public Task update(String username, Task task) {
+        Task checkTaskIfExistByUser = checkTaskIfExistByUser(task.getId(), username, "this is task '"+task.getName()+"' not found in the user "+ username);
+        if(checkTaskIfExistByUser.getCompleted().equals(true)){
+            throw new IllegalArgumentException("You can't updated this task because task has already done!");
+        }
+        checkTaskIfExistByUser.setName(task.getName());
+        checkTaskIfExistByUser.setDescription(task.getDescription());
+        checkTaskIfExistByUser.setTags(task.getTags());
+        checkTaskIfExistByUser.setStartDate(task.getStartDate());
+        checkTaskIfExistByUser.setEndDate(task.getEndDate());
+        checkTaskIfExistByUser.setStatusTask(task.getStatusTask());
+        return taskRepository.save(checkTaskIfExistByUser);
     }
 
     @Override
@@ -53,12 +77,62 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task rejectedTask(String userAssignmentP, String managerP, Long taskId) {
-        User userAssigmnet = checkUserIfExist(userAssignmentP,
+    public Task rejectedTask(Long taskIdP, String userAssignmentP, String managerP) {
+        User userAssigment = checkUserIfExist(userAssignmentP,
                 "This is user assignment not exist!");
         User manager = checkUserIfExist(managerP,
                 "This is manager not exist!");
+        Task checkTaskIfExistByAssigmentAndManager = taskRepository.findTaskByIdAndAssignedToAndUser(taskIdP, userAssigment, manager)
+                .orElseThrow(() -> new IllegalArgumentException("Not found this task assigment"));
+        //check task if complete
+        if(checkTaskIfExistByAssigmentAndManager.getCompleted().equals(true)){
+            throw new IllegalArgumentException("You can't reject this task because task has already done!");
+        }
+        //check task if changed
+        if(checkTaskIfExistByAssigmentAndManager.getChanged().equals(false)){
+            checkTaskIfExistByAssigmentAndManager.setAssignedTo(null);
+            checkTaskIfExistByAssigmentAndManager.setChanged(true);
+            requestManagerServiceImpl.checkRejectedIfBigThen2(userAssigment);
+        }else{
+            throw new IllegalArgumentException("You can't reject this task because it has already been assigned to another user who has already rejected it!");
+        }
+        return taskRepository.save(checkTaskIfExistByAssigmentAndManager);
+    }
 
+    @Override
+    public void deletedTask(Long taskIdP, String userAssignmentP, String managerP) {
+        User userAssigment = checkUserIfExist(userAssignmentP,
+                "This is user assignment not exist!");
+        User manager = checkUserIfExist(managerP,
+                "This is manager not exist!");
+        Task checkTaskIfExistByAssigmentAndManager = taskRepository.findTaskByIdAndAssignedToAndUser(taskIdP, userAssigment, manager)
+                .orElseThrow(() -> new IllegalArgumentException("Not found this task assigment"));
+        //check task if complete
+        if(checkTaskIfExistByAssigmentAndManager.getCompleted().equals(true)){
+            throw new IllegalArgumentException("You can't deleted this task because task has already done!");
+        }
+        //check task if changed
+        if(checkTaskIfExistByAssigmentAndManager.getChanged().equals(false)){
+            requestManagerServiceImpl.checkDeletedIfBigThen1(userAssigment);
+        }else{
+            throw new IllegalArgumentException("You can't deleted this task because it has already been assigned to another user who has already rejected it!");
+        }
+        taskRepository.delete(checkTaskIfExistByAssigmentAndManager);
+    }
+
+    @Override
+    public Task assignmentToUser(Long taskIdP, String userAssignmentP, String managerP) {
+        User userAssigment = checkUserIfExist(userAssignmentP,
+                "This is user assignment not exist!");
+        Task checkTaskIfExistByManager =
+                checkTaskIfExistByUser(taskIdP, managerP, "No tasks found for this manager");
+        //check task if complete
+        if(checkTaskIfExistByManager.getCompleted().equals(true)){
+            throw new IllegalArgumentException("You can't deleted this task because task has already done!");
+        }
+        //check task if changed
+        checkTaskIfExistByManager.setAssignedTo(userAssigment);
+        return taskRepository.save(checkTaskIfExistByManager);
     }
 
 
@@ -67,6 +141,13 @@ public class TaskServiceImpl implements TaskService {
         if(task.getStartDate().isBefore(LocalDateTime.now())){
             throw new IllegalArgumentException("Date has moved beyond this date now!");
         }
+    }
+
+    public Task checkTaskIfExistByUser(Long task, String username, String message){
+        User user = checkUserIfExist(username,
+                "This is user not exist! "+username);
+        return taskRepository.findTaskByIdAndUser(task, user)
+                .orElseThrow(() -> new IllegalArgumentException(message));
     }
 
     public User checkUserIfExist(String username, String errorMessage){
@@ -81,4 +162,21 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalArgumentException("Oops, something's wrong!");
         }
     }
+
+//    public Boolean checkTaskIfComplete(Task task){
+//        if(task.getCompleted().equals(true)){
+//            throw new IllegalArgumentException("You can't deleted this task because task has already done!");
+//        }
+//        return true;
+//    }
+
+//    public Task findTaskByIdAndAssignedToAndUserMethode(Long taskIdP, String userAssignmentP, String managerP){
+//        User userAssigment = checkUserIfExist(userAssignmentP,
+//                "This is user assignment not exist!");
+//        User manager = checkUserIfExist(managerP,
+//                "This is manager not exist!");
+//        return taskRepository.findTaskByIdAndAssignedToAndUser(taskIdP, userAssigment, manager)
+//                .orElseThrow(() -> new IllegalArgumentException("Not found this task assigment"));
+//    }
+
 }

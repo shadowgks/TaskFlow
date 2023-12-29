@@ -1,7 +1,6 @@
 package com.example.taskflow.web.rest;
 
 import com.example.taskflow.domain.entities.Task;
-import com.example.taskflow.domain.entities.User;
 import com.example.taskflow.dto.task.request.TaskRequestDto;
 import com.example.taskflow.dto.task.response.TaskResponseDto;
 import com.example.taskflow.mapper.TaskMapper;
@@ -31,6 +30,17 @@ public class TaskController {
                 .toList());
         return ResponseEntity.ok(listResponse);
     }
+    @GetMapping("{username}")
+    public ResponseEntity<Response<List<TaskResponseDto>>> getTasksByUsername(@PathVariable("username") String username){
+        Response<List<TaskResponseDto>> listResponse = new Response<>();
+        List<Task> taskList = taskService.getTasksByUsername(username);
+        listResponse.setMessage("Success, found all task "+username);
+        listResponse.setResult(taskList
+                .stream()
+                .map(TaskMapper::mapToDto)
+                .toList());
+        return ResponseEntity.ok(listResponse);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Response<TaskResponseDto>> createTask(@Valid
@@ -42,14 +52,41 @@ public class TaskController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/rejected")
-    public ResponseEntity<Response<TaskResponseDto>> rejectedTask(@Valid
-                                                                      @RequestParam String userAssignmentReq,
+    @PutMapping("/update/{username}")
+    public ResponseEntity<Response<TaskResponseDto>> updateTaskByUsername(@Valid
+                                                                              @PathVariable("username") String username,
+                                                                @RequestBody TaskRequestDto taskRequestDto){
+        Response<TaskResponseDto> response = new Response<>();
+        Task task = taskService.update(username ,TaskMapper.mapToEntity(taskRequestDto));
+        response.setResult(TaskMapper.mapToDto(task));
+        response.setMessage("Update Task Successfully");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{rejectedOrDeletedOrAssignment}")
+    public ResponseEntity<Response<TaskResponseDto>> rejectedOrDeletedTask(@Valid @PathVariable("rejectedOrDeletedOrAssignment") 
+                                                                               String rejectedOrDeletedOrAssignment,
+                                                                  @RequestParam String userAssignmentReq,
                                                                   @RequestParam String managerReq,
                                                                   @RequestParam Long taskIdReq){
         Response<TaskResponseDto> response = new Response<>();
-        Task task = taskService.rejectedTask(userAssignmentReq, managerReq, taskIdReq);
-        response.setResult(TaskMapper.mapToDto(task));
+        switch (rejectedOrDeletedOrAssignment) {
+            case "rejected" -> {
+                Task task = taskService.rejectedTask(taskIdReq, userAssignmentReq, managerReq);
+                response.setResult(TaskMapper.mapToDto(task));
+                response.setMessage("Success, Rejected task assigment");
+            }
+            case "deleted" -> {
+                taskService.deletedTask(taskIdReq, userAssignmentReq, managerReq);
+                response.setMessage("Success, Deleted task assigment");
+            }
+            case "assignmentToUser" -> {
+                Task task = taskService.assignmentToUser(taskIdReq, userAssignmentReq, managerReq);
+                response.setResult(TaskMapper.mapToDto(task));
+                response.setMessage("Success, Assignment task to another user");
+            }
+            default -> response.setError("Sorry, you have two choices: [Rejected, Deleted, assignmentToUser].");
+        }
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }
