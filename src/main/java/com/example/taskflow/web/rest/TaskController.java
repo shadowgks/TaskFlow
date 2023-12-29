@@ -1,6 +1,7 @@
 package com.example.taskflow.web.rest;
 
 import com.example.taskflow.domain.entities.Task;
+import com.example.taskflow.domain.entities.User;
 import com.example.taskflow.dto.task.request.TaskRequestDto;
 import com.example.taskflow.dto.task.response.TaskResponseDto;
 import com.example.taskflow.mapper.TaskMapper;
@@ -32,11 +33,23 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Response<TaskResponseDto>> createTask(@Valid @RequestBody TaskRequestDto taskRequestDto){
+    public ResponseEntity<Response<TaskResponseDto>> createTask(@Valid
+                                                                    @RequestBody TaskRequestDto taskRequestDto){
         Response<TaskResponseDto> response = new Response<>();
         Task task = taskService.create(TaskMapper.mapToEntity(taskRequestDto));
         response.setResult(TaskMapper.mapToDto(task));
         response.setMessage("Created Task Successfully");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/rejected")
+    public ResponseEntity<Response<TaskResponseDto>> rejectedTask(@Valid
+                                                                      @RequestParam String userAssignmentReq,
+                                                                  @RequestParam String managerReq,
+                                                                  @RequestParam Long taskIdReq){
+        Response<TaskResponseDto> response = new Response<>();
+        Task task = taskService.rejectedTask(userAssignmentReq, managerReq, taskIdReq);
+        response.setResult(TaskMapper.mapToDto(task));
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }

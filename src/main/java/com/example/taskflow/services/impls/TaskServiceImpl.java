@@ -52,6 +52,15 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
+    @Override
+    public Task rejectedTask(String userAssignmentP, String managerP, Long taskId) {
+        User userAssigmnet = checkUserIfExist(userAssignmentP,
+                "This is user assignment not exist!");
+        User manager = checkUserIfExist(managerP,
+                "This is manager not exist!");
+
+    }
+
 
     //Validate!
     public void validateDateTask(Task task){
