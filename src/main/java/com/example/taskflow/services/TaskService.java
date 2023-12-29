@@ -10,9 +10,9 @@ public interface TaskService {
     List<Task> getTasks();
     List<Task> getTasksByUsername(String username);
     Task create(Task task);
-    Task update(String username, Task task);
-    void delete(Task task);
-    Task rejectedTask(Long taskIdP, String userAssignmentP, String managerP);
-    void deletedTask(Long taskIdP, String userAssignmentP, String managerP);
+    Task update(Task task, String username);
+    void delete(Long taskId, String username);
+    Task rejectedTaskByToken(Long taskIdP, String userAssignmentP, String managerP);
+    void deletedTaskByToken(Long taskIdP, String userAssignmentP, String managerP);
     Task assignmentToUser(Long taskIdP, String userAssignmentP, String managerP);
 }

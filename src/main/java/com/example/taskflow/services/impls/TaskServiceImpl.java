@@ -57,7 +57,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task update(String username, Task task) {
+    public Task update(Task task, String username) {
         Task checkTaskIfExistByUser = checkTaskIfExistByUser(task.getId(), username, "this is task '"+task.getName()+"' not found in the user "+ username);
         if(checkTaskIfExistByUser.getCompleted().equals(true)){
             throw new IllegalArgumentException("You can't updated this task because task has already done!");
@@ -72,12 +72,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Task task) {
-
+    public void delete(Long taskId, String username) {
+        Task checkTaskIfExistByUser = checkTaskIfExistByUser(taskId, username, "this is task '"+taskId+"' not found in the user "+ username);
+        taskRepository.delete(checkTaskIfExistByUser);
     }
 
     @Override
-    public Task rejectedTask(Long taskIdP, String userAssignmentP, String managerP) {
+    public Task rejectedTaskByToken(Long taskIdP, String userAssignmentP, String managerP) {
         User userAssigment = checkUserIfExist(userAssignmentP,
                 "This is user assignment not exist!");
         User manager = checkUserIfExist(managerP,
@@ -100,7 +101,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deletedTask(Long taskIdP, String userAssignmentP, String managerP) {
+    public void deletedTaskByToken(Long taskIdP, String userAssignmentP, String managerP) {
         User userAssigment = checkUserIfExist(userAssignmentP,
                 "This is user assignment not exist!");
         User manager = checkUserIfExist(managerP,

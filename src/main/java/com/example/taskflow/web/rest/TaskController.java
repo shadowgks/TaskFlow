@@ -57,10 +57,20 @@ public class TaskController {
                                                                               @PathVariable("username") String username,
                                                                 @RequestBody TaskRequestDto taskRequestDto){
         Response<TaskResponseDto> response = new Response<>();
-        Task task = taskService.update(username ,TaskMapper.mapToEntity(taskRequestDto));
+        Task task = taskService.update(TaskMapper.mapToEntity(taskRequestDto), username);
         response.setResult(TaskMapper.mapToDto(task));
         response.setMessage("Update Task Successfully");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete/{username}/{idTask}")
+    public ResponseEntity<Response<TaskResponseDto>> deleteTaskByUsername(@Valid
+                                                                          @PathVariable("username") String username,
+                                                                          @PathVariable("idTask") Long idTask){
+        Response<TaskResponseDto> response = new Response<>();
+        taskService.delete(idTask, username);
+        response.setMessage("Deleted Task Successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{rejectedOrDeletedOrAssignment}")
@@ -72,12 +82,12 @@ public class TaskController {
         Response<TaskResponseDto> response = new Response<>();
         switch (rejectedOrDeletedOrAssignment) {
             case "rejected" -> {
-                Task task = taskService.rejectedTask(taskIdReq, userAssignmentReq, managerReq);
+                Task task = taskService.rejectedTaskByToken(taskIdReq, userAssignmentReq, managerReq);
                 response.setResult(TaskMapper.mapToDto(task));
                 response.setMessage("Success, Rejected task assigment");
             }
             case "deleted" -> {
-                taskService.deletedTask(taskIdReq, userAssignmentReq, managerReq);
+                taskService.deletedTaskByToken(taskIdReq, userAssignmentReq, managerReq);
                 response.setMessage("Success, Deleted task assigment");
             }
             case "assignmentToUser" -> {
