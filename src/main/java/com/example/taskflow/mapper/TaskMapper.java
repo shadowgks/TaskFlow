@@ -15,7 +15,6 @@ public class TaskMapper {
                 .tags(task.getTags())
                 .changed(task.getChanged())
                 .description(task.getDescription())
-                .completed(task.getCompleted())
                 .createdAt(task.getCreatedAt())
                 .startDate(task.getStartDate())
                 .user(task.getUser())

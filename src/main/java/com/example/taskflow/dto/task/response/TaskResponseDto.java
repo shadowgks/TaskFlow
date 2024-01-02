@@ -14,7 +14,6 @@ public record TaskResponseDto(
         LocalDateTime startDate,
         LocalDateTime endDate,
         StatusTask statusTask,
-        Boolean completed,
         Boolean changed,
         LocalDateTime createdAt,
         List<String>tags,
