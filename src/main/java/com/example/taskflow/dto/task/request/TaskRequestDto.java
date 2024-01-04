@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record TaskRequestDto(
+        Long id,
         @NotBlank(message = "Name cannot be blank")
         String name,
         @NotBlank(message = "Description cannot be blank")

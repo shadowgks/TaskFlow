@@ -24,7 +24,6 @@ public class Task {
     private LocalDateTime endDate;
     @Enumerated(EnumType.STRING)
     private StatusTask statusTask;
-    private Boolean completed;
     private Boolean changed;
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -43,9 +42,6 @@ public class Task {
     public void setDefaultValue(){
         if(changed == null){
             changed = false;
-        }
-        if(completed == null){
-            completed = false;
         }
     }
 }

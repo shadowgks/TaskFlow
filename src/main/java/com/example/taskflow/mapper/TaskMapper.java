@@ -15,7 +15,6 @@ public class TaskMapper {
                 .tags(task.getTags())
                 .changed(task.getChanged())
                 .description(task.getDescription())
-                .completed(task.getCompleted())
                 .createdAt(task.getCreatedAt())
                 .startDate(task.getStartDate())
                 .user(task.getUser())
@@ -24,6 +23,7 @@ public class TaskMapper {
 
     public static Task mapToEntity(TaskRequestDto taskRequestDto){
         return Task.builder()
+                .id(taskRequestDto.id())
                 .name(taskRequestDto.name())
                 .statusTask(taskRequestDto.statusTask())
                 .endDate(taskRequestDto.endDate())

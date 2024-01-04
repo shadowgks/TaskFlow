@@ -5,7 +5,7 @@
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="1703842234652-1"
+    <changeSet id="1704202349810-1"
                author="momos (generated)">
         <createTable tableName="request_manager">
             <column autoIncrement="true"
@@ -25,7 +25,7 @@
                     type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703842234652-2"
+    <changeSet id="1704202349810-2"
                author="momos (generated)">
         <createTable tableName="task">
             <column autoIncrement="true"
@@ -45,8 +45,6 @@
                     type="DATETIME"/>
             <column name="status_task"
                     type="VARCHAR(255)"/>
-            <column name="completed"
-                    type="BOOLEAN"/>
             <column name="changed"
                     type="BOOLEAN"/>
             <column name="created_at"
@@ -57,7 +55,7 @@
                     type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703842234652-3"
+    <changeSet id="1704202349810-3"
                author="momos (generated)">
         <createTable tableName="task_tags">
             <column name="task_id"
@@ -68,7 +66,7 @@
                     type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703842234652-4"
+    <changeSet id="1704202349810-4"
                author="momos (generated)">
         <createTable tableName="user">
             <column autoIncrement="true"
@@ -92,19 +90,19 @@
                     type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703842234652-5"
+    <changeSet id="1704202349810-5"
                author="momos (generated)">
         <addUniqueConstraint columnNames="email"
                              constraintName="uc_user_email"
                              tableName="user"/>
     </changeSet>
-    <changeSet id="1703842234652-6"
+    <changeSet id="1704202349810-6"
                author="momos (generated)">
         <addUniqueConstraint columnNames="user_name"
                              constraintName="uc_user_username"
                              tableName="user"/>
     </changeSet>
-    <changeSet id="1703842234652-7"
+    <changeSet id="1704202349810-7"
                author="momos (generated)">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="request_manager"
@@ -112,7 +110,7 @@
                                  referencedColumnNames="id"
                                  referencedTableName="user"/>
     </changeSet>
-    <changeSet id="1703842234652-8"
+    <changeSet id="1704202349810-8"
                author="momos (generated)">
         <addForeignKeyConstraint baseColumnNames="assigned_to_id"
                                  baseTableName="task"
@@ -120,7 +118,7 @@
                                  referencedColumnNames="id"
                                  referencedTableName="user"/>
     </changeSet>
-    <changeSet id="1703842234652-9"
+    <changeSet id="1704202349810-9"
                author="momos (generated)">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="task"
@@ -128,7 +126,7 @@
                                  referencedColumnNames="id"
                                  referencedTableName="user"/>
     </changeSet>
-    <changeSet id="1703842234652-10"
+    <changeSet id="1704202349810-10"
                author="momos (generated)">
         <addForeignKeyConstraint baseColumnNames="task_id"
                                  baseTableName="task_tags"
